@@ -1,7 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_02_chat/services/auth_services.dart';
 import 'package:flutter_02_chat/widget/custom_logo.dart';
 import 'package:flutter_02_chat/widget/widget_form.dart';
 import 'package:flutter_02_chat/widget/widget_label.dart';
+import 'package:provider/provider.dart';
+import 'package:flutter_02_chat/helpers/show_alertt.dart';
 
 class LoginPage extends StatelessWidget {
   const LoginPage({Key? key}) : super(key: key);
@@ -23,7 +26,7 @@ class LoginPage extends StatelessWidget {
                 ),
                 _Form(),
                 Labels(
-                  titulo:' no tienes cuenta',
+                  titulo: ' no tienes cuenta',
                   subtitulo: 'Registrate ahora',
                   ruta: 'register',
                 ),
@@ -56,6 +59,7 @@ class __FormState extends State<_Form> {
 
   @override
   Widget build(BuildContext context) {
+    final authService = Provider.of<AuthServices>(context);
     return Container(
         child: Column(
       children: [
@@ -74,11 +78,21 @@ class __FormState extends State<_Form> {
         ),
         TextButton(
             style: ButtonStyle(backgroundColor: MaterialStateProperty.all<Color>(Colors.blue), fixedSize: MaterialStateProperty.all(Size.fromWidth(150))),
-            onPressed: () {
-              print(emailCtrl.text);
-            },
+            onPressed: authService.autenticando
+                ? null
+                : () async {
+                    FocusScope.of(context).unfocus();
+                    final loginOk = await authService.login(emailCtrl.text.trim(), passCtrl.text.trim());
+
+                    if (loginOk) {
+                      Navigator.pushReplacementNamed(context, 'userr');
+                    } else {
+                      //alerta
+                      mostrarAlerta(context, 'login Incorrecto', 'revise sus credenciales nuevamente');
+                    }
+                  },
             child: Text(
-              'Entrar',
+              'ingresar',
               style: TextStyle(color: Colors.white),
             )),
       ],
