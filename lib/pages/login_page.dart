@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_02_chat/services/auth_services.dart';
+import 'package:flutter_02_chat/services/socket_services.dart';
 import 'package:flutter_02_chat/widget/custom_logo.dart';
 import 'package:flutter_02_chat/widget/widget_form.dart';
 import 'package:flutter_02_chat/widget/widget_label.dart';
@@ -60,6 +61,7 @@ class __FormState extends State<_Form> {
   @override
   Widget build(BuildContext context) {
     final authService = Provider.of<AuthServices>(context);
+    final socketService = Provider.of<SocketServices>(context);
     return Container(
         child: Column(
       children: [
@@ -85,6 +87,7 @@ class __FormState extends State<_Form> {
                     final loginOk = await authService.login(emailCtrl.text.trim(), passCtrl.text.trim());
 
                     if (loginOk) {
+                      socketService.connect();
                       Navigator.pushReplacementNamed(context, 'userr');
                     } else {
                       //alerta

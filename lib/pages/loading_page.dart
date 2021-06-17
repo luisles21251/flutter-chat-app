@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_02_chat/pages/login_page.dart';
 import 'package:flutter_02_chat/pages/user_pages.dart';
 import 'package:flutter_02_chat/services/auth_services.dart';
+import 'package:flutter_02_chat/services/socket_services.dart';
 import 'package:provider/provider.dart';
 
 class LoadingPage extends StatelessWidget {
@@ -31,10 +32,12 @@ class LoadingPage extends StatelessWidget {
 
   Future checkLoginState(BuildContext context) async {
     final authServices = Provider.of<AuthServices>(context, listen: false);
+    final socketServices = Provider.of<SocketServices>(context, listen: false);
 
     final autenticado = await authServices.isLoggedIn();
     print('a punto de entrar a la condicion');
-    if (autenticado ==true ) {
+    if (autenticado == true) {
+      socketServices.connect();
       Navigator.pushReplacement(context, PageRouteBuilder(pageBuilder: (_, __, ___) => UserPage(), transitionDuration: Duration(milliseconds: 0)));
     } else {
       Navigator.pushReplacement(context, PageRouteBuilder(pageBuilder: (_, __, ___) => LoginPage(), transitionDuration: Duration(milliseconds: 0)));

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_02_chat/helpers/show_alertt.dart';
 import 'package:flutter_02_chat/services/auth_services.dart';
+import 'package:flutter_02_chat/services/socket_services.dart';
 import 'package:flutter_02_chat/widget/custom_logo.dart';
 import 'package:flutter_02_chat/widget/widget_form.dart';
 import 'package:flutter_02_chat/widget/widget_label.dart';
@@ -53,6 +54,7 @@ class _FormRState extends State<_FormR> {
   @override
   Widget build(BuildContext context) {
     final authServices = Provider.of<AuthServices>(context);
+    final socketService = Provider.of<SocketServices>(context);
     return Container(
         child: Column(
       children: [
@@ -79,12 +81,10 @@ class _FormRState extends State<_FormR> {
             onPressed: authServices.autenticando
                 ? null
                 : () async {
-                    print(nameCtrl.text);
-                    print(emailCtrl.text);
-                    print(pssCtrl.text);
                     final registerOK = await authServices.register(nameCtrl.text.trim(), emailCtrl.text.trim(), pssCtrl.text.trim());
 
-                    if (registerOK== true) {
+                    if (registerOK == true) {
+                      socketService.connect();
                       //connectar al socket server
                       Navigator.pushReplacementNamed(context, 'userr');
                     } else {
